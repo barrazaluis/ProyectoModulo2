@@ -62,4 +62,38 @@ inicio() {
     }
   }
 
+  crearEncuesta() {
+    const nombre = prompt("Ingrese el nombre de la encuesta:");
+    if (!nombre || nombre.trim() === "") {
+      alert("Nombre inválido. Cancelando creación.");
+      return;
+    }
+
+    const encuesta = new Encuesta(nombre.trim());
+
+    for (let i = 0; i < 2; i++) {
+      const textoPregunta = prompt(`Pregunta ${i + 1}:`);
+      if (!textoPregunta || textoPregunta.trim() === "") {
+        alert("Texto inválido. Cancelando encuesta.");
+        return;
+      }
+
+      const pregunta = new Pregunta(textoPregunta.trim());
+
+      for (let j = 0; j < 2; j++) {
+        const textoOpcion = prompt(`Opción ${j + 1} para la pregunta ${i + 1}:`);
+        if (!textoOpcion || textoOpcion.trim() === "") {
+          alert("Opción inválida. Cancelando encuesta.");
+          return;
+        }
+        pregunta.agregarOpcion(textoOpcion.trim());
+      }
+
+      encuesta.agregarPregunta(pregunta);
+    }
+
+    this.encuestas.push(encuesta);
+    alert("Encuesta creada exitosamente.");
+  }
+
   
