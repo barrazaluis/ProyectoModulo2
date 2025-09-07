@@ -1,5 +1,8 @@
 alert("bienvenido al sistema de encuestas")
 
+let encuestas = [];
+let resultados = [];
+
 function inicio(){
 let salir = false;
 while(!salir){
@@ -26,49 +29,78 @@ else if (seleccion === 4) {
 }
 inicio()
 
-let encuestas = [];
-let resultados = [];
 
-function generarEncuesta(encuestas) {
-    
+function generarEncuesta() {
   const nombre = prompt("Ingrese el nombre de la encuesta:");
   if (!nombre || nombre.trim() === "") {
-    console.log("Nombre inválido. Cancelando creación.");
+    alert("Nombre inválido. Cancelando creación.");
     return;
   }
-  
+
   const nuevaEncuesta = {
     id: Date.now(),
     nombre: nombre.trim(),
     preguntas: []
   };
 
-  // Iterar para ingresar 8 preguntas
-  for (let i = 0; i < 8; i++) {
-    const textoPregunta = prompt(`Ingrese el texto de la pregunta ${i + 1}:`);
+  for (let i = 0; i < 2; i++) {
+    const textoPregunta = prompt(`Pregunta ${i + 1}:`);
     if (!textoPregunta || textoPregunta.trim() === "") {
-      console.log(`Pregunta ${i + 1} inválida. Cancelando encuesta.`);
+      alert("Texto inválido. Cancelando encuesta.");
       return;
     }
 
     const opciones = [];
-    for (let j = 0; j < 3; j++) {
-      const opcion = prompt(`Ingrese la opción ${j + 1} para la pregunta ${i + 1}:`);
+    for (let j = 0; j < 2; j++) {
+      const opcion = prompt(`Opción ${j + 1} para la pregunta ${i + 1}:`);
       if (!opcion || opcion.trim() === "") {
-        console.log(`Opción ${j + 1} inválida. Cancelando encuesta.`);
+        alert("Opción inválida. Cancelando encuesta.");
         return;
       }
-      opciones.push(opcion.trim());
+      opciones.push({ texto: opcion.trim(), votos: 0 });
     }
 
-    // Agregar pregunta con sus opciones
     nuevaEncuesta.preguntas.push({
       texto: textoPregunta.trim(),
-      opciones: opciones
+      opciones
     });
   }
 
-  // Agregar encuesta al array global
   encuestas.push(nuevaEncuesta);
-  console.log("✅ Encuesta creada con éxito:", nuevaEncuesta);
+  alert("Encuesta creada exitosamente.");
+}
+
+function votarEnEncuesta() {
+  if (encuestas.length === 0) {
+    alert("No hay encuestas disponibles.");
+    return;
+  }
+
+  let lista = encuestas.map((e, i) => `${i + 1}. ${e.nombre}`).join("\n");
+  const seleccion = Number(prompt(`Seleccione una encuesta:\n${lista}`)) - 1;
+
+  const encuesta = encuestas[seleccion];
+  if (!encuesta) {
+    alert("Encuesta no válida.");
+    return;
+  }
+
+  let preguntasTexto = encuesta.preguntas.map((p, i) => `${i + 1}. ${p.texto}`).join("\n");
+  const preguntaIndex = Number(prompt(`Seleccione una pregunta:\n${preguntasTexto}`)) - 1;
+
+  const pregunta = encuesta.preguntas[preguntaIndex];
+  if (!pregunta) {
+    alert("Pregunta no válida.");
+    return;
+  }
+
+  let opcionesTexto = pregunta.opciones.map((op, i) => `${i + 1}. ${op.texto}`).join("\n");
+  const opcionIndex = Number(prompt(`Seleccione una opción:\n${opcionesTexto}`)) - 1;
+
+  if (pregunta.opciones[opcionIndex]) {
+    pregunta.opciones[opcionIndex].votos++;
+    alert("Voto registrado.");
+  } else {
+    alert("Opción no válida.");
+  }
 }
