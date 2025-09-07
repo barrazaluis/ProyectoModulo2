@@ -86,31 +86,32 @@ function votarEnEncuesta() {
     return;
   }
 
+  // Mostrar lista de encuestas
   let lista = encuestas.map((e, i) => `${i + 1}. ${e.nombre}`).join("\n");
   const seleccion = Number(prompt(`Seleccione una encuesta:\n${lista}`)) - 1;
 
-  const encuesta = encuestas[seleccion];
-  if (!encuesta) {
+  if (seleccion < 0 || seleccion >= encuestas.length || isNaN(seleccion)) {
     alert("Encuesta no válida.");
     return;
   }
 
-  let preguntasTexto = encuesta.preguntas.map((p, i) => `${i + 1}. ${p.texto}`).join("\n");
-  const preguntaIndex = Number(prompt(`Seleccione una pregunta:\n${preguntasTexto}`)) - 1;
+  const encuesta = encuestas[seleccion];
+  alert(`Has seleccionado la encuesta: ${encuesta.nombre}`);
 
-  const pregunta = encuesta.preguntas[preguntaIndex];
-  if (!pregunta) {
-    alert("Pregunta no válida.");
-    return;
-  }
+  // Iterar por todas las preguntas
+  for (let i = 0; i < encuesta.preguntas.length; i++) {
+    const pregunta = encuesta.preguntas[i];
+    let opcionesTexto = pregunta.opciones.map((op, j) => `${j + 1}. ${op.texto}`).join("\n");
+    const opcionIndex = Number(prompt(`Pregunta ${i + 1}:\n${pregunta.texto}\n${opcionesTexto}`)) - 1;
 
-  let opcionesTexto = pregunta.opciones.map((op, i) => `${i + 1}. ${op.texto}`).join("\n");
-  const opcionIndex = Number(prompt(`Seleccione una opción:\n${opcionesTexto}`)) - 1;
+    if (opcionIndex < 0 || opcionIndex >= pregunta.opciones.length || isNaN(opcionIndex)) {
+      alert("Opción no válida. Se omite esta pregunta.");
+      continue;
+    }
 
-  if (pregunta.opciones[opcionIndex]) {
     pregunta.opciones[opcionIndex].votos++;
     alert("Voto registrado.");
-  } else {
-    alert("Opción no válida.");
   }
+
+  alert("Gracias por completar la encuesta.");
 }
