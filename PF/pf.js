@@ -3,6 +3,24 @@ alert("Bienvenido al sistema de encuestas");
 let encuestas = [];
 let votaciones = [];
 
+const crearPregunta = (texto, opcionesTexto) => ({
+  texto,
+  opciones: opcionesTexto.map(op => ({
+    texto: op,
+    votos: 0,
+    votantes: []
+  }))
+});
+
+const registrarVoto = (pregunta, opcionIndex, votante) => ({
+  ...pregunta,
+  opciones: pregunta.opciones.map((op, i) =>
+    i === opcionIndex
+      ? { ...op, votos: op.votos + 1, votantes: [...op.votantes, votante] }
+      : op
+  )
+});
+
 function inicio() {
   let salir = false;
   while (!salir) {
@@ -41,27 +59,25 @@ function generarEncuesta() {
     preguntas: []
   };
 
-  for (let i = 0; i < 2; i++) { // Puedes cambiar a 8 si lo deseas
+  for (let i = 0; i < 8; i++) {
     const textoPregunta = prompt(`Pregunta ${i + 1}:`);
     if (!textoPregunta || textoPregunta.trim() === "") {
       alert("Texto inválido. Cancelando encuesta.");
       return;
     }
 
-    const opciones = [];
+    const opcionesTexto = [];
     for (let j = 0; j < 2; j++) {
       const opcion = prompt(`Opción ${j + 1} para la pregunta ${i + 1}:`);
       if (!opcion || opcion.trim() === "") {
         alert("Opción inválida. Cancelando encuesta.");
         return;
       }
-      opciones.push({ texto: opcion.trim(), votos: 0, votantes: [] });
+      opcionesTexto.push(opcion.trim());
     }
 
-    nuevaEncuesta.preguntas.push({
-      texto: textoPregunta.trim(),
-      opciones
-    });
+    const pregunta = crearPregunta(textoPregunta.trim(), opcionesTexto);
+    nuevaEncuesta.preguntas.push(pregunta);
   }
 
   encuestas.push(nuevaEncuesta);
@@ -91,24 +107,22 @@ function votarEnEncuesta() {
   const encuesta = encuestas[seleccion];
   const respuestas = [];
 
-  for (let i = 0; i < encuesta.preguntas.length; i++) {
-    const pregunta = encuesta.preguntas[i];
+  encuesta.preguntas = encuesta.preguntas.map((pregunta, i) => {
     let opcionesTexto = pregunta.opciones.map((op, j) => `${j + 1}. ${op.texto}`).join("\n");
     const opcionIndex = Number(prompt(`Pregunta ${i + 1}:\n${pregunta.texto}\n${opcionesTexto}`)) - 1;
 
     if (opcionIndex < 0 || opcionIndex >= pregunta.opciones.length || isNaN(opcionIndex)) {
       alert("Opción no válida. Se omite esta pregunta.");
-      continue;
+      return pregunta;
     }
-
-    pregunta.opciones[opcionIndex].votos++;
-    pregunta.opciones[opcionIndex].votantes.push(nombreVotante.trim());
 
     respuestas.push({
       pregunta: pregunta.texto,
       opcion: pregunta.opciones[opcionIndex].texto
     });
-  }
+
+    return registrarVoto(pregunta, opcionIndex, nombreVotante.trim());
+  });
 
   votaciones.push({
     nombre: nombreVotante.trim(),

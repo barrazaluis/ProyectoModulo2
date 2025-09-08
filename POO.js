@@ -1,2 +1,0 @@
-alert("Bienvenido al sistema de encuestas");
-
