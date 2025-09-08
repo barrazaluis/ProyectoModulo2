@@ -37,7 +37,7 @@ class SistemaEncuestas {
     this.votaciones = [];
   }
 
-inicio() {
+  inicio() {
     let salir = false;
     while (!salir) {
       let seleccion = Number(prompt("Sistema de encuestas\n" +
@@ -71,7 +71,7 @@ inicio() {
 
     const encuesta = new Encuesta(nombre.trim());
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 8; i++) {
       const textoPregunta = prompt(`Pregunta ${i + 1}:`);
       if (!textoPregunta || textoPregunta.trim() === "") {
         alert("Texto inválido. Cancelando encuesta.");
@@ -95,8 +95,6 @@ inicio() {
     this.encuestas.push(encuesta);
     alert("Encuesta creada exitosamente.");
   }
-
-
 
   votarEnEncuesta() {
     if (this.encuestas.length === 0) {
@@ -172,3 +170,7 @@ inicio() {
     alert(resultadoTexto);
   }
 }
+
+// Ejecutar el sistema
+const sistema = new SistemaEncuestas();
+sistema.inicio();
